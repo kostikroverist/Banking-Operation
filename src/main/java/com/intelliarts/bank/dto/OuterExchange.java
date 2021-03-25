@@ -28,6 +28,7 @@ public class OuterExchange {
 
         Set<String> keys = rates.keySet();
         for (String key : keys) {
+
             try {
                 BigDecimal rate = rates.get(key);
                 Currency currency = Currency.getInstance(key);

@@ -3,11 +3,10 @@ package com.intelliarts.bank.controller;
 
 import com.intelliarts.bank.domain.Expenses;
 import com.intelliarts.bank.service.BankingOperationService;
-import com.intelliarts.bank.service.impl.BankingServiceImpl;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class BankingController {
     }
 
     @GetMapping("/total")
-    public  double  totalExpenses(@RequestParam("base") String base) throws IOException {
+    public BigDecimal totalExpenses(@RequestParam("base") String base) throws IOException {
         Currency currency = Currency.getInstance(base);
         return bankingService.getTotalPrice(currency);
     }

@@ -5,6 +5,7 @@ import com.intelliarts.bank.domain.Expenses;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.util.Currency;
 import java.util.List;
@@ -17,5 +18,5 @@ public interface BankingOperationService {
 
     void deleteByAllDate(String date);
 
-    double getTotalPrice(Currency base) throws IOException;
+    BigDecimal getTotalPrice(Currency base) throws IOException;
 }

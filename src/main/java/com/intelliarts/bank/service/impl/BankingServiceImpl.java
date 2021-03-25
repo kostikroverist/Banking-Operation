@@ -2,6 +2,7 @@ package com.intelliarts.bank.service.impl;
 
 import com.intelliarts.bank.dao.BankingOperationRepository;
 import com.intelliarts.bank.domain.Expenses;
+import com.intelliarts.bank.exception.BankNotFoundException;
 import com.intelliarts.bank.service.BankingOperationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -25,6 +26,9 @@ public class BankingServiceImpl implements BankingOperationService {
 
     @Override
     public Expenses saveExpenses(Expenses bankingOperation) {
+        if(bankingOperation.getAmount()<0){
+            throw  new BankNotFoundException("amount cannot be less than zero");
+        }
         return bankingOperationRepository.save(bankingOperation);
     }
 
@@ -40,7 +44,7 @@ public class BankingServiceImpl implements BankingOperationService {
     }
 
     @Override
-    public double getTotalPrice(Currency base) throws IOException {
+    public BigDecimal getTotalPrice(Currency base) throws IOException {
          List<Expenses> expenses = bankingOperationRepository.findAll();
 
         Set<Currency> currencies = new LinkedHashSet<>();
@@ -51,13 +55,17 @@ public class BankingServiceImpl implements BankingOperationService {
         Map<Currency, BigDecimal> exchangeRate = exchangeService.getExchangeRate(base, currencies);
 
         var total = BigDecimal.ZERO;
-
+        BigDecimal result = null;
         for (Expenses expens : expenses) {
             BigDecimal scale = exchangeRate.get(expens.getCurrency().getCurrency());
-            BigDecimal result = BigDecimal.valueOf(expens.getAmount()).divide(scale, MathContext.DECIMAL32);
+            if(expens.getCurrency().getCurrency().equals(base)){
+                result = BigDecimal.valueOf(expens.getAmount());
+            }else
+             result = BigDecimal.valueOf(expens.getAmount()).divide(scale, MathContext.DECIMAL32);
             total = total.add(result);
         }
-        return total.doubleValue();
+
+        return total;
     }
 
 
